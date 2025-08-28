@@ -1,0 +1,396 @@
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "DIV",
+  "class": "thread",
+  "id": "",
+  "depth": 3,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)",
+  "text": "This is the official thread for discussing the login bug reported in version 2.1.",
+  "outer_html": "<div class=\"thread\">\n    <p>This is the official thread for discussing the login bug reported in version 2.1.</p>\n  </div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "P",
+  "class": "",
+  "id": "",
+  "depth": 4,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)>P:nth-of-type(1)",
+  "text": "This is the official thread for discussing the login bug reported in version 2.1.",
+  "outer_html": "<p>This is the official thread for discussing the login bug reported in version 2.1.</p>",
+  "childCount": 0,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "DIV",
+  "class": "post user",
+  "id": "",
+  "depth": 3,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(2)",
+  "text": "Alice: I'm still seeing this issue after clearing cache.",
+  "outer_html": "<div class=\"post user\">\n    <p><strong>Alice:</strong> I'm still seeing this issue after clearing cache.</p>\n  </div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "P",
+  "class": "",
+  "id": "",
+  "depth": 4,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(2)>P:nth-of-type(1)",
+  "text": "Alice: I'm still seeing this issue after clearing cache.",
+  "outer_html": "<p><strong>Alice:</strong> I'm still seeing this issue after clearing cache.</p>",
+  "childCount": 1,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "DIV",
+  "class": "post user",
+  "id": "",
+  "depth": 3,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(3)",
+  "text": "Bob: Works fine on my end with Chrome 120.",
+  "outer_html": "<div class=\"post user\">\n    <p><strong>Bob:</strong> Works fine on my end with Chrome 120.</p>\n  </div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "P",
+  "class": "",
+  "id": "",
+  "depth": 4,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(3)>P:nth-of-type(1)",
+  "text": "Bob: Works fine on my end with Chrome 120.",
+  "outer_html": "<p><strong>Bob:</strong> Works fine on my end with Chrome 120.</p>",
+  "childCount": 1,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "DIV",
+  "class": "post dev",
+  "id": "",
+  "depth": 3,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(4)",
+  "text": "Moderator: Thanks for reporting, we’ll ship a patch next week.",
+  "outer_html": "<div class=\"post dev\">\n    <p><strong>Moderator:</strong> Thanks for reporting, we’ll ship a patch next week.</p>\n  </div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "tag": "P",
+  "class": "",
+  "id": "",
+  "depth": 4,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(4)>P:nth-of-type(1)",
+  "text": "Moderator: Thanks for reporting, we’ll ship a patch next week.",
+  "outer_html": "<p><strong>Moderator:</strong> Thanks for reporting, we’ll ship a patch next week.</p>",
+  "childCount": 1,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "DIV",
+  "class": "product",
+  "id": "",
+  "depth": 3,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)",
+  "text": "Price: $49.99\n\nDescription: The latest gadget with cutting-edge features.",
+  "outer_html": "<div class=\"product\">\n    <p>Price: <strong>$49.99</strong></p>\n    <p>Description: The latest gadget with cutting-edge features.</p>\n  </div>",
+  "childCount": 2,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "P",
+  "class": "",
+  "id": "",
+  "depth": 4,
+  "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)>P:nth-of-type(2)",
+  "text": "Description: The latest gadget with cutting-edge features.",
+  "outer_html": "<p>Description: The latest gadget with cutting-edge features.</p>",
+  "childCount": 0,
+  "weak_label": "unknown",
+  "weak_conf": 0.5,
+  "explain": {
+    "user_feats": [
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.05,
+    "s_dev": 0,
+    "p_user": 0.55
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "DIV",
+  "class": "",
+  "id": "reviews",
+  "depth": 1,
+  "path": "DIV#reviews",
+  "text": "Alice: Love this gadget!\nBob: Battery life could be better.\nCharlie: Just bought it, works well!",
+  "outer_html": "<div id=\"reviews\">\n    <div class=\"review\"><span class=\"author\">Alice:</span> Love this gadget!</div>\n    <div class=\"review\"><span class=\"author\">Bob:</span> Battery life could be better.</div>\n  <div class=\"review\"><span class=\"author\">Charlie:</span> Just bought it, works well!</div></div>",
+  "childCount": 3,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "DIV",
+  "class": "review",
+  "id": "",
+  "depth": 2,
+  "path": "DIV#reviews>DIV:nth-of-type(1)",
+  "text": "Alice: Love this gadget!",
+  "outer_html": "<div class=\"review\"><span class=\"author\">Alice:</span> Love this gadget!</div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "DIV",
+  "class": "review",
+  "id": "",
+  "depth": 2,
+  "path": "DIV#reviews>DIV:nth-of-type(2)",
+  "text": "Bob: Battery life could be better.",
+  "outer_html": "<div class=\"review\"><span class=\"author\">Bob:</span> Battery life could be better.</div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/product.html",
+  "tag": "DIV",
+  "class": "review",
+  "id": "",
+  "depth": 2,
+  "path": "DIV#reviews>DIV:nth-of-type(3)",
+  "text": "Charlie: Just bought it, works well!",
+  "outer_html": "<div class=\"review\"><span class=\"author\">Charlie:</span> Just bought it, works well!</div>",
+  "childCount": 1,
+  "weak_label": "user",
+  "weak_conf": 0.85,
+  "explain": {
+    "user_feats": [
+      [
+        "class_id_semantics",
+        0.3
+      ],
+      [
+        "small_leafish",
+        0.05
+      ]
+    ],
+    "dev_feats": [],
+    "s_user": 0.35,
+    "s_dev": 0,
+    "p_user": 0.85
+  }
+}

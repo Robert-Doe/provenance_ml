@@ -1,0 +1,93 @@
+{
+  "site_id": "synth",
+  "url": "http://localhost:8000/forum.html",
+  "ts": 1755711494781,
+  "rendered_html": "<html lang=\"en\"><head>\n  <meta charset=\"UTF-8\">\n  <title>Sample Forum Thread</title>\n  <style>\n    body { font-family: Arial, sans-serif; margin: 2rem; }\n    header, footer { background: #f5f5f5; padding: 1rem; border-radius: 8px; margin: 1rem 0; }\n    .thread { border: 1px solid #ccc; padding: 1rem; margin-bottom: 2rem; }\n    .post { border-top: 1px dashed #aaa; padding: 0.5rem; }\n    .post.user { background: #f9f9f9; }\n    .post.dev { background: #eef; }\n  </style>\n</head>\n<body>\n  <header class=\"nav\">Forum � Home � Categories</header>\n  <h1>Forum Thread: How to Fix Login Bug?</h1>\n  <div class=\"thread\">\n    <p>This is the official thread for discussing the login bug reported in version 2.1.</p>\n  </div>\n\n  <div class=\"post user\">\n    <p><strong>Alice:</strong> I'm still seeing this issue after clearing cache.</p>\n  </div>\n\n  <div class=\"post user\">\n    <p><strong>Bob:</strong> Works fine on my end with Chrome 120.</p>\n  </div>\n\n  <div class=\"post dev\">\n    <p><strong>Moderator:</strong> Thanks for reporting, we�ll ship a patch next week.</p>\n  </div>\n\n  <footer>� 2025 Synth Forum</footer>\n\n\n</body></html>",
+  "net_log": [],
+  "runtime_inserts": [],
+  "candidates": [
+    {
+      "tag": "DIV",
+      "class": "thread",
+      "id": "",
+      "depth": 3,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)",
+      "text": "This is the official thread for discussing the login bug reported in version 2.1.",
+      "outer_html": "<div class=\"thread\">\n    <p>This is the official thread for discussing the login bug reported in version 2.1.</p>\n  </div>",
+      "childCount": 1
+    },
+    {
+      "tag": "P",
+      "class": "",
+      "id": "",
+      "depth": 4,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(1)>P:nth-of-type(1)",
+      "text": "This is the official thread for discussing the login bug reported in version 2.1.",
+      "outer_html": "<p>This is the official thread for discussing the login bug reported in version 2.1.</p>",
+      "childCount": 0
+    },
+    {
+      "tag": "DIV",
+      "class": "post user",
+      "id": "",
+      "depth": 3,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(2)",
+      "text": "Alice: I'm still seeing this issue after clearing cache.",
+      "outer_html": "<div class=\"post user\">\n    <p><strong>Alice:</strong> I'm still seeing this issue after clearing cache.</p>\n  </div>",
+      "childCount": 1
+    },
+    {
+      "tag": "P",
+      "class": "",
+      "id": "",
+      "depth": 4,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(2)>P:nth-of-type(1)",
+      "text": "Alice: I'm still seeing this issue after clearing cache.",
+      "outer_html": "<p><strong>Alice:</strong> I'm still seeing this issue after clearing cache.</p>",
+      "childCount": 1
+    },
+    {
+      "tag": "DIV",
+      "class": "post user",
+      "id": "",
+      "depth": 3,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(3)",
+      "text": "Bob: Works fine on my end with Chrome 120.",
+      "outer_html": "<div class=\"post user\">\n    <p><strong>Bob:</strong> Works fine on my end with Chrome 120.</p>\n  </div>",
+      "childCount": 1
+    },
+    {
+      "tag": "P",
+      "class": "",
+      "id": "",
+      "depth": 4,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(3)>P:nth-of-type(1)",
+      "text": "Bob: Works fine on my end with Chrome 120.",
+      "outer_html": "<p><strong>Bob:</strong> Works fine on my end with Chrome 120.</p>",
+      "childCount": 1
+    },
+    {
+      "tag": "DIV",
+      "class": "post dev",
+      "id": "",
+      "depth": 3,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(4)",
+      "text": "Moderator: Thanks for reporting, we�ll ship a patch next week.",
+      "outer_html": "<div class=\"post dev\">\n    <p><strong>Moderator:</strong> Thanks for reporting, we�ll ship a patch next week.</p>\n  </div>",
+      "childCount": 1
+    },
+    {
+      "tag": "P",
+      "class": "",
+      "id": "",
+      "depth": 4,
+      "path": "HTML:nth-of-type(1)>BODY:nth-of-type(1)>DIV:nth-of-type(4)>P:nth-of-type(1)",
+      "text": "Moderator: Thanks for reporting, we�ll ship a patch next week.",
+      "outer_html": "<p><strong>Moderator:</strong> Thanks for reporting, we�ll ship a patch next week.</p>",
+      "childCount": 1
+    }
+  ],
+  "status": 200,
+  "hook_injected": true,
+  "error": null
+}
