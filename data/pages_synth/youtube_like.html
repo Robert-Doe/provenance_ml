@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic YouTube-style Watch</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--border:#2a2f38;--card:#121720;--radius:12px}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  header{background:#10141b;border-bottom:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;align-items:center}
+  input{flex:1;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:999px;padding:8px}
+  main{max-width:1200px;margin:0 auto;padding:12px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+  .player{background:#0f131a;border:1px solid var(--border);border-radius:var(--radius);height:420px;display:grid;place-items:center}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px}
+  .small{color:var(--muted);font-size:13px}
+  .comment{border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
+  textarea{width:100%;min-height:80px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+</style>
+</head>
+<body>
+<header><div style="font-weight:900">s-tube</div><input placeholder="Search"></header>
+<main class="grid">
+  <section>
+    <div class="player">[ Player ]</div>
+    <article class="card" style="margin-top:8px">
+      <h1>How compilers optimize your loops</h1>
+      <div class="small">1,284,992 views • Uploaded last week</div>
+      <div style="margin-top:8px"><button>Like</button> <button>Share</button> <button>Save</button></div>
+    </article>
+    <article class="card">
+      <h2>Comments</h2>
+      <div class="comment"><div class="small">dev_pupil</div>Loved the visualizations.</div>
+      <form onsubmit="addC(event)"><textarea id="ctext" placeholder="Add a comment…" required></textarea><button style="margin-top:8px">Comment</button></form>
+    </article>
+  </section>
+  <aside>
+    <div class="card"><strong>Up next</strong><div class="small">JIT vs AOT explained</div></div>
+    <div class="card"><strong>Recommended</strong><div class="small">CPU Branch Prediction 101</div></div>
+  </aside>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addC(e){e.preventDefault();const t=esc(document.getElementById('ctext').value);const d=document.createElement('div');d.className='comment';d.innerHTML='<div class="small">you</div>'+t;e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic HN-style Thread</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--border:#2a2f38}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui}
+  header{background:#151a22;border-bottom:1px solid var(--border);padding:8px 12px;font-weight:800}
+  main{max-width:900px;margin:0 auto;padding:12px}
+  .meta{color:var(--muted)}
+  .comment{border-left:3px solid #2f3642;margin:10px 0;padding-left:10px}
+  textarea{width:100%;min-height:80px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+  button{margin-top:8px}
+</style>
+</head>
+<body>
+<header>s-news</header>
+<main>
+  <h1>Show HN: Minimal time tracker that lives in the tray</h1>
+  <div class="meta">325 points by maker42 5 hours ago | 182 comments</div>
+
+  <section style="margin-top:12px">
+    <div class="comment"><div class="meta">commenter1 4h ago</div>Useful! Does it export CSV?</div>
+    <div class="comment" style="margin-left:16px"><div class="meta">maker42 3h ago</div>Yes, one click from the menu.</div>
+    <div class="comment"><div class="meta">senior_dev 2h ago</div>Would love a pomodoro mode.</div>
+    <form onsubmit="postComment(event)">
+      <textarea id="t" placeholder="Add a comment…" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function postComment(e){e.preventDefault();const t=esc(document.getElementById('t').value);const d=document.createElement('div');d.className='comment';d.innerHTML='<div class="meta">you just now</div>'+t;e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en" data-site="synthetic-cnn-like">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Synthetic News Network (SNN) — CNN-like Layout for ML Training</title>
+  <meta name="description" content="Synthetic, CNN-inspired news homepage and article layout with author vs user-generated content labeled for provenance/XSS research.">
+  <style>
+    :root{
+      --bg:#0b0c0e;
+      --bg-soft:#121417;
+      --card:#1a1d21;
+      --accent:#cc0000;
+      --accent-soft:#ff4d4f;
+      --text:#e7e9ee;
+      --muted:#a9b0bc;
+      --link:#82b1ff;
+      --good:#2dbf73;
+      --warning:#ffb020;
+      --border:#2b2f36;
+      --shadow: 0 2px 10px rgba(0,0,0,.25);
+      --radius:16px;
+      --radius-sm:10px;
+      --max:1280px;
+      --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.55 var(--font)}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    img{display:block;max-width:100%;height:auto;border-radius:var(--radius-sm)}
+    .container{max-width:var(--max);margin:0 auto;padding:0 16px}
+    .topbar{background:var(--bg-soft);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+    .topbar .container{display:flex;align-items:center;gap:16px;padding:10px 16px}
+    .logo{font-weight:900;letter-spacing:.2px;font-size:20px}
+    .logo .pill{background:var(--accent);padding:2px 6px;border-radius:6px;margin-right:6px}
+    .meta{margin-left:auto;color:var(--muted);font-size:13px;display:flex;gap:16px;align-items:center}
+    .nav{background:#0e0f12;border-bottom:1px solid var(--border)}
+    .nav .container{display:flex;gap:14px;flex-wrap:wrap;padding:8px 0}
+    .nav a{color:#d5d9e4;padding:6px 10px;border-radius:6px}
+    .nav a[aria-current="page"], .nav a:hover{background:var(--card)}
+    .ticker{background:var(--card);border-bottom:1px solid var(--border)}
+    .ticker .container{display:flex;gap:16px;align-items:center;padding:10px 0;font-size:15px}
+    .badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);padding:4px 8px;border-radius:999px;font-weight:700}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin:20px 0}
+    .hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .hero .content{padding:16px}
+    .kicker{color:var(--accent-soft);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.4px}
+    h1,h2,h3{line-height:1.25;margin:8px 0 4px}
+    h1{font-size:32px}
+    h2{font-size:24px}
+    h3{font-size:19px}
+    .byline{color:var(--muted);font-size:14px}
+    .deck{color:#dbe1ee;font-size:18px;margin-top:6px}
+    .list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .list li{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+    .section-title{font-size:18px;font-weight:800;margin:8px 0 12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{font-size:12px;color:var(--muted);border:1px dashed var(--border);padding:2px 6px;border-radius:999px}
+    .ad-slot{display:grid;place-items:center;border:2px dashed #3a404c;border-radius:12px;min-height:120px;color:#7f8896;background:#0e1116}
+    .ad-slot small{color:#6b7280}
+    .aside .card{margin-bottom:16px}
+    /* Article page styles */
+    .article{margin:22px 0; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden}
+    .article header{padding:16px 16px 0}
+    .article .meta-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:14px}
+    .article figure{margin:0;padding:0}
+    .article .body{padding:16px;display:grid;grid-template-columns:1fr minmax(260px, 320px);gap:24px}
+    .provenance-legend{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .prov{padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);display:inline-flex;gap:6px;align-items:center}
+    .prov[data-kind="author"]{background:rgba(204,0,0,.12)}
+    .prov[data-kind="ugc"]{background:rgba(45,191,115,.12)}
+    .prov[data-kind="third-party"]{background:rgba(130,177,255,.12)}
+    .prov[data-kind="system"]{background:rgba(255,176,32,.12)}
+    .prov[data-kind="ads"]{background:rgba(255,77,79,.12)}
+    .body p{margin:12px 0}
+    .pullquote{border-left:4px solid var(--accent);padding-left:12px;font-size:18px;color:#f0f3ff}
+    .infobox{background:#0f1217;border:1px solid var(--border);border-radius:12px;padding:12px}
+    .sidebar .mini{display:grid;gap:10px}
+    .inline-embed{background:#0e1116;border:1px dashed #384050;border-radius:12px;padding:12px;font-size:14px}
+    .inline-embed code{font-family:var(--mono);font-size:12px}
+    .badge-live{background:var(--accent);padding:2px 6px;border-radius:6px;font-weight:800}
+    .live-updates{display:grid;gap:10px}
+    .live-item{border-left:3px solid var(--accent);padding-left:10px}
+    /* Comments */
+    .comments{margin-top:24px}
+    .comment{background:#0f1217;border:1px solid var(--border);border-radius:12px;padding:10px;margin:10px 0}
+    .comment .meta{justify-content:flex-start;margin-left:0}
+    .comment .author{font-weight:700}
+    .comment .time{color:var(--muted);font-size:12px;margin-left:6px}
+    .comment .content{white-space:pre-wrap}
+    .comment[data-sanitized="true"] .content code{background:#11141a;border:1px solid #2e3440;border-radius:6px;padding:2px 6px}
+    .reply{margin-left:20px;border-left:2px dashed #2f3744;padding-left:10px}
+    .comment-form{background:#0f1217;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:12px}
+    .comment-form textarea{width:100%;min-height:90px;border:1px solid #2c3340;background:#0b0d12;color:var(--text);border-radius:8px;padding:8px}
+    .comment-form input[type="text"], .comment-form input[type="email"]{width:100%;border:1px solid #2c3340;background:#0b0d12;color:var(--text);border-radius:8px;padding:8px;margin-bottom:8px}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);border:none;color:white;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:800}
+    .btn.secondary{background:#2b303a;color:#e6ebf3}
+    .btn.ghost{background:transparent;border:1px solid var(--border);color:#e6ebf3}
+    .muted{color:var(--muted)}
+    /* Footer */
+    footer{margin-top:40px;border-top:1px solid var(--border);background:#0b0c0f}
+    footer .container{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:24px 16px}
+    footer small{color:var(--muted)}
+    /* Responsive */
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .article .body{grid-template-columns:1fr}
+      footer .container{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 560px){
+      footer .container{grid-template-columns:1fr}
+    }
+  </style>
+
+  <!-- JSON-LD schema (system generated metadata) -->
+  <script type="application/ld+json" data-provenance="system">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    "name": "Synthetic News Network",
+    "url": "https://example.invalid/snn",
+    "logo": "https://example.invalid/logo.svg"
+  }
+  </script>
+</head>
+<body>
+  <!-- Cookie consent (system) -->
+  <div class="cookie" data-provenance="system" style="position:sticky;top:0;z-index:9999;background:#11141a;border-bottom:1px solid var(--border);padding:8px 0;display:none">
+    <div class="container" style="display:flex;align-items:center;gap:10px">
+      <div>We use synthetic cookies for this demo.</div>
+      <div style="margin-left:auto">
+        <button class="btn secondary" onclick="this.closest('.cookie').style.display='none'">Okay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="topbar" data-provenance="system">
+    <div class="container">
+      <div class="logo" aria-label="SNN home">
+        <span class="pill">SNN</span> Synthetic News Network
+      </div>
+      <form role="search" aria-label="Site search" class="search" onsubmit="event.preventDefault()" data-provenance="ugc">
+        <input aria-label="Search query" placeholder="Search" style="border:1px solid #2f3744;background:#0c0f14;color:#e8eef9;border-radius:999px;padding:6px 10px" />
+      </form>
+      <div class="meta">
+        <span class="edition">U.S. Edition</span>
+        <span class="date" id="now"></span>
+        <a href="#signin" onclick="openSignIn()">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary nav -->
+  <nav class="nav" role="navigation" data-provenance="system" aria-label="Primary">
+    <div class="container">
+      <a href="#" aria-current="page">Home</a>
+      <a href="#">U.S.</a>
+      <a href="#">World</a>
+      <a href="#">Politics</a>
+      <a href="#">Business</a>
+      <a href="#">Health</a>
+      <a href="#">Entertainment</a>
+      <a href="#">Style</a>
+      <a href="#">Travel</a>
+      <a href="#">Sports</a>
+      <a href="#">Video</a>
+      <a href="#"><span class="badge-live">LIVE</span> TV</a>
+    </div>
+  </nav>
+
+  <!-- Breaking ticker -->
+  <div class="ticker" data-provenance="author">
+    <div class="container">
+      <span class="badge">Breaking</span>
+      <marquee behavior="scroll" direction="left" scrollamount="4" aria-label="Breaking updates">
+        Markets rally on tech gains • Tropical storm approaches coastline • Election debates announced •
+        Synthetic demo headline rotates here
+      </marquee>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Grid: hero + aside -->
+    <section class="grid" aria-label="Top stories">
+      <article class="hero" itemscope itemtype="https://schema.org/NewsArticle" data-provenance="author">
+        <figure>
+          <div style="background:#10131a;height:260px;display:grid;place-items:center;color:#6b7280">[ Lead Image Placeholder ]</div>
+        </figure>
+        <div class="content">
+          <div class="kicker">POLITICS</div>
+          <h1 itemprop="headline">Capitol consensus eludes negotiators as clock ticks toward funding deadline</h1>
+          <p class="deck" itemprop="description">Leaders search for a path amid competing demands on spending and policy riders that could upend a fragile truce.</p>
+          <div class="byline">By <span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Alex Rivera</span></span> • <time itemprop="datePublished" datetime="2025-09-02T12:34:00Z">Updated 1 hour ago</time></div>
+          <div class="chips provenance-legend">
+            <span class="prov" data-kind="author">author</span>
+            <span class="prov" data-kind="ugc">user-generated</span>
+            <span class="prov" data-kind="third-party">third-party</span>
+            <span class="prov" data-kind="system">system</span>
+            <span class="prov" data-kind="ads">ads</span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="aside">
+        <div class="card" data-provenance="system">
+          <div class="section-title">Trending</div>
+          <ol class="list" role="list">
+            <li data-provenance="system"><a href="#">What the jobs report tells us</a></li>
+            <li data-provenance="system"><a href="#">Live tracker: storm path</a></li>
+            <li data-provenance="system"><a href="#">Opinion: The case for calm</a></li>
+            <li data-provenance="system"><a href="#">Explainer: Interest rates 101</a></li>
+          </ol>
+        </div>
+        <div class="card" data-provenance="ads">
+          <div class="ad-slot" role="complementary" aria-label="Advertisement" data-slot="top-right-1">
+            <div>ADVERTISEMENT</div>
+            <small>slot: top-right-1 (synthetic)</small>
+          </div>
+        </div>
+        <div class="card" data-provenance="author">
+          <div class="section-title">Opinion</div>
+          <div class="mini">
+            <a href="#">The quiet strength of boring policy</a>
+            <a href="#">Why climate math keeps changing</a>
+            <a href="#">Sports deserve their analytics moment</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Multi-story rail -->
+    <section aria-label="Featured stories">
+      <div class="section-title">Featured</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <!-- Repeat a variety of cards -->
+        <article class="card" data-provenance="author">
+          <img alt="" src="" aria-hidden="true" style="background:#10131a;height:120px">
+          <h3>How a tiny tax change rippled through markets</h3>
+          <p class="muted">4 min read</p>
+        </article>
+        <article class="card" data-provenance="author">
+          <img alt="" src="" aria-hidden="true" style="background:#10131a;height:120px">
+          <h3>Inside the factory building tomorrow’s batteries</h3>
+          <p class="muted">7 min read</p>
+        </article>
+        <article class="card" data-provenance="author">
+          <img alt="" src="" aria-hidden="true" style="background:#10131a;height:120px">
+          <h3>Storm prep guide: What to do and when</h3>
+          <p class="muted">Explainer</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Article body (detailed) -->
+    <article class="article" id="lead-article" itemscope itemtype="https://schema.org/NewsArticle" data-provenance="author">
+      <header>
+        <h2 itemprop="headline">As funding talks stall, agencies sketch contingency plans</h2>
+        <div class="meta-row">
+          <span class="byline">By <strong itemprop="author">Jamie Park</strong></span>
+          <time class="muted" itemprop="dateModified" datetime="2025-09-03T08:00:00Z">September 3, 2025</time>
+          <span class="muted">Location: Washington</span>
+        </div>
+      </header>
+      <figure>
+        <div style="background:#0f1217;height:260px;display:grid;place-items:center;color:#6b7280">[ Article Image Placeholder ]</div>
+        <figcaption class="muted" data-provenance="author">A late-night session in the Capitol as negotiators huddle. <em>Photo: SNN</em></figcaption>
+      </figure>
+      <div class="body">
+        <div class="main">
+          <p>Agencies across the federal government have begun drafting contingency plans as talks over a stopgap funding measure drag into the week, according to officials familiar with the discussions.</p>
+          <p class="pullquote">“There’s urgency without panic,” one senior aide said, describing a sprint to line up votes while avoiding last-minute surprises.</p>
+          <p>
+            The emerging framework would keep spending flat for several weeks while committees hammer out differences over
+            policy riders. Several lawmakers cautioned that even a short extension could be complicated by amendments on
+            unrelated issues that have vocal constituencies.
+          </p>
+
+          <!-- Inline third-party embed (e.g., social post) -->
+          <div class="inline-embed" data-provenance="third-party" aria-label="Embedded social post">
+            <strong>Embedded Post (synthetic)</strong>
+            <p class="muted">This block simulates a third-party widget (e.g., X/Twitter or YouTube). Treat as <code>third-party</code> in labeling.</p>
+            <code>&lt;blockquote class="twitter-tweet"&gt;...&lt;/blockquote&gt;</code>
+          </div>
+
+          <!-- Live updates authored by newsroom (author) -->
+          <section aria-label="Live updates" class="live-updates" data-provenance="author">
+            <div class="section-title"><span class="badge-live">LIVE</span> Updates</div>
+            <article class="live-item">
+              <time class="muted">8:05 a.m.</time>
+              <p>Negotiators break for caucus meetings; aides say talks “productive” but unresolved.</p>
+            </article>
+            <article class="live-item">
+              <time class="muted">7:42 a.m.</time>
+              <p>Committee staff circulate draft with trimmed rider list to test support.</p>
+            </article>
+          </section>
+
+          <!-- Newsletter signup (UGC inputs) -->
+          <aside class="infobox" data-provenance="system">
+            <strong>Get our politics newsletter</strong>
+            <form class="newsletter" data-provenance="ugc" data-sanitize-policy="email-only" onsubmit="event.preventDefault(); alert('Thanks for subscribing (synthetic)!')">
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" required style="width:100%;margin-top:6px;border:1px solid #2c3340;background:#0b0d12;color:#e9eef7;border-radius:8px;padding:8px">
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn" type="submit">Subscribe</button>
+                <button class="btn ghost" type="button">Privacy</button>
+              </div>
+            </form>
+          </aside>
+
+          <!-- Inline comments preview (UGC) -->
+          <section aria-label="Reader highlights" class="infobox" data-provenance="ugc">
+            <strong>Reader highlights</strong>
+            <p class="muted">Selected comments pinned by moderators.</p>
+            <div class="comment" data-provenance="ugc">
+              <div><span class="author">civicNerd</span> <span class="time">2m ago</span></div>
+              <div class="content">Appreciate the explainer on policy riders—more of this context please.</div>
+            </div>
+          </section>
+
+          <p>Still, several policy areas remain contentious, including disaster assistance offsets and the timing of a
+            separate vote on long-term appropriations. Leaders signaled that any agreement would arrive with little
+            room for error, given the tight calendar.</p>
+          <div class="inline-embed" data-provenance="third-party">
+            <strong>Data chart (synthetic)</strong>
+            <p class="muted">This area mimics an embedded chart iframe.</p>
+            <code>&lt;iframe title="chart" src="about:blank" sandbox&gt;&lt;/iframe&gt;</code>
+          </div>
+          <p>Analysts warn that brinkmanship could spook markets already digesting shifting rate expectations.</p>
+
+          <!-- Poll (UGC inputs) -->
+          <form class="infobox" data-provenance="ugc" data-sanitize-policy="radio-only" onsubmit="event.preventDefault();this.querySelector('.result').textContent='Thanks for voting (synthetic).';">
+            <strong>Quick poll</strong>
+            <p>Should lawmakers pass a short-term funding bill?</p>
+            <label><input type="radio" name="poll" required> Yes</label><br>
+            <label><input type="radio" name="poll" required> No</label><br>
+            <label><input type="radio" name="poll" required> Unsure</label><br>
+            <button class="btn" type="submit">Vote</button>
+            <span class="result muted" style="margin-left:8px"></span>
+          </form>
+
+          <!-- End of main body -->
+        </div>
+
+        <!-- Sidebar content -->
+        <aside class="sidebar">
+          <div class="infobox" data-provenance="author">
+            <strong>Key points</strong>
+            <ul>
+              <li>Stopgap bill likely limited in scope</li>
+              <li>Riders trimmed to improve odds</li>
+              <li>Market reaction muted so far</li>
+            </ul>
+          </div>
+
+          <div class="infobox" data-provenance="third-party">
+            <strong>Sponsored content</strong>
+            <p class="muted">This simulates a native ad from a third-party network.</p>
+          </div>
+
+          <div class="ad-slot" data-provenance="ads" data-slot="article-right-rail-1" role="complementary">
+            <div>ADVERTISEMENT</div>
+            <small>slot: article-right-rail-1 (synthetic)</small>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Comment thread (UGC) -->
+      <section class="comments" aria-label="Comments">
+        <h3>Comments</h3>
+        <div class="comment" data-provenance="ugc" data-sanitized="true">
+          <div class="meta"><span class="author">policy_wonk</span><span class="time">15m ago</span></div>
+          <div class="content">
+            I’m curious whether offsets are real or just timing shifts. Also, thanks for escaping suspicious text:
+            <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code> should never execute here.
+          </div>
+        </div>
+        <div class="comment reply" data-provenance="ugc">
+          <div class="meta"><span class="author">SNN_moderator</span><span class="time">12m ago</span></div>
+          <div class="content">Great question. We removed personal info and sanitized HTML per our community rules.</div>
+        </div>
+        <div class="comment" data-provenance="ugc">
+          <div class="meta"><span class="author">reader42</span><span class="time">9m ago</span></div>
+          <div class="content">The explainer on “policy riders” helped a lot—maybe add a quick visual?</div>
+        </div>
+        <form class="comment-form" data-provenance="ugc" data-sanitize-policy="escape_html" onsubmit="postComment(event)">
+          <label for="name">Name</label>
+          <input id="name" type="text" required placeholder="Your display name">
+          <label for="email">Email (never shown)</label>
+          <input id="email" type="email" required placeholder="you@example.com">
+          <label for="comment">Comment</label>
+          <textarea id="comment" placeholder="Share your thoughts"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" type="submit">Post</button>
+            <button class="btn ghost" type="button" onclick="loadMoreComments()">Load more</button>
+          </div>
+          <p class="muted" style="margin-top:8px">We escape HTML and strip scripts. Mentions like @username are allowed.</p>
+        </form>
+      </section>
+    </article>
+
+    <!-- Additional sections to increase DOM variety -->
+    <section class="grid" aria-label="More stories">
+      <div>
+        <div class="section-title">Business</div>
+        <ul class="list">
+          <li data-provenance="author"><a href="#">Startups rethink burn as rates stay higher for longer</a></li>
+          <li data-provenance="author"><a href="#">Crypto markets steady after volatile weekend</a></li>
+          <li data-provenance="author"><a href="#">A look inside the chip supply rebound</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-title">Most read</div>
+        <ul class="list">
+          <li data-provenance="system"><a href="#">Five charts that explain the week</a></li>
+          <li data-provenance="system"><a href="#">Why forecasts keep missing</a></li>
+          <li data-provenance="system"><a href="#">How to prepare for hurricane season</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Video rail -->
+    <section aria-label="Video">
+      <div class="section-title">Latest video</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div class="card" data-provenance="author">
+          <div style="background:#0f1217;height:120px;display:grid;place-items:center">[Video Thumbnail]</div>
+          <div>Reporter walks through latest draft</div>
+        </div>
+        <div class="card" data-provenance="author">
+          <div style="background:#0f1217;height:120px;display:grid;place-items:center">[Video Thumbnail]</div>
+          <div>Explainer: What is a CR?</div>
+        </div>
+        <div class="card" data-provenance="author">
+          <div style="background:#0f1217;height:120px;display:grid;place-items:center">[Video Thumbnail]</div>
+          <div>Markets minute: Why yields matter</div>
+        </div>
+        <div class="card" data-provenance="third-party">
+          <div style="background:#0f1217;height:120px;display:grid;place-items:center">[Embedded Player]</div>
+          <div>Third-party clip (licensed)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duplicate multiple "sections" to make file long and diverse -->
+    <section aria-label="Regional news">
+      <div class="section-title">Across the U.S.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <!-- We'll programmatically repeat via script too -->
+        <article class="card" data-provenance="author"><h3>West: Drought eases after late rains</h3><p class="muted">Environment</p></article>
+        <article class="card" data-provenance="author"><h3>South: Electric grid braces for heat</h3><p class="muted">Energy</p></article>
+        <article class="card" data-provenance="author"><h3>Northeast: Transit upgrades approved</h3><p class="muted">Infrastructure</p></article>
+      </div>
+    </section>
+
+    <!-- Sign-in modal (system) -->
+    <dialog id="signin" data-provenance="system" style="border:none;border-radius:16px;max-width:520px;width:100%;background:#0f1217;color:#e8eef9">
+      <form method="dialog" style="padding:16px">
+        <h3>Sign in</h3>
+        <input type="email" placeholder="Email" required style="width:100%;margin:6px 0 8px;border:1px solid #2c3340;background:#0b0d12;color:#e8eef9;border-radius:8px;padding:8px">
+        <input type="password" placeholder="Password" required style="width:100%;margin:6px 0 8px;border:1px solid #2c3340;background:#0b0d12;color:#e8eef9;border-radius:8px;padding:8px">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn" value="ok">Continue</button>
+          <button class="btn ghost" value="cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Repeated content to ensure "very long" DOM -->
+    <section aria-label="Deep archive">
+      <div class="section-title">From the archive</div>
+      <div id="archive-list" class="list"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>
+        <strong>Sections</strong>
+        <ul class="list" style="background:transparent;border:none;grid-auto-rows:min-content">
+          <li style="background:transparent;border:none;padding:0"><a href="#">U.S.</a></li>
+          <li style="background:transparent;border:none;padding:0"><a href="#">World</a></li>
+          <li style="background:transparent;border:none;padding:0"><a href="#">Politics</a></li>
+          <li style="background:transparent;border:none;padding:0"><a href="#">Business</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>About</strong>
+        <p class="muted">This is a synthetic page inspired by CNN-style layouts. It contains explicit provenance labels for research.</p>
+      </div>
+      <div>
+        <strong>Legal</strong>
+        <p class="muted">No real ads, no tracking. Content is fictional.</p>
+      </div>
+      <div>
+        <strong>Contact</strong>
+        <p class="muted">tips@example.invalid</p>
+      </div>
+    </div>
+    <div class="container"><small>&copy; 2025 SNN</small></div>
+  </footer>
+
+  <script data-provenance="system">
+    // Populate current time
+    document.getElementById('now').textContent = new Date().toLocaleString();
+
+    // Open sign-in modal
+    function openSignIn(){
+      const d = document.getElementById('signin');
+      if (typeof d.showModal === 'function') d.showModal();
+      else d.style.display='block';
+    }
+
+    // Simple sanitizer for comments (escape HTML)
+    function escapeHTML(str){
+      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // Post a comment (UGC)
+    function postComment(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim() || 'Anonymous';
+      const raw = document.getElementById('comment').value;
+      const safe = escapeHTML(raw);
+      const wrap = document.createElement('div');
+      wrap.className = 'comment';
+      wrap.dataset.provenance = 'ugc';
+      wrap.dataset.sanitized = 'true';
+      wrap.innerHTML = '<div class="meta"><span class="author"></span><span class="time">just now</span></div><div class="content"></div>';
+      wrap.querySelector('.author').textContent = name;
+      wrap.querySelector('.content').innerHTML = safe;
+      e.target.insertAdjacentElement('beforebegin', wrap);
+      e.target.reset();
+    }
+
+    // Load more comments (UGC)
+    function loadMoreComments(){
+      const sample = [
+        "I disagree but appreciate the nuance.",
+        "Please interview agency staff on the rider scope.",
+        "This is where a timeline would help readers."
+      ];
+      for (let i=0;i<3;i++){
+        const div = document.createElement('div');
+        div.className='comment';
+        div.dataset.provenance='ugc';
+        div.innerHTML = '<div class="meta"><span class="author">guest'+Math.floor(Math.random()*1000)+'</span><span class="time">moments ago</span></div><div class="content">'+escapeHTML(sample[i])+'</div>';
+        document.querySelector('.comments').appendChild(div);
+      }
+    }
+
+    // Inflate archive with many items (author/system) to make DOM long
+    const archive = document.getElementById('archive-list');
+    for(let year=2015; year<=2025; year++){
+      for(let i=1;i<=20;i++){
+        const li = document.createElement('li');
+        li.dataset.provenance = (i%5===0)?'system':'author';
+        li.innerHTML = '<a href="#">Archive story '+year+' • '+('0'+i).slice(-2)+'</a>';
+        archive.appendChild(li);
+      }
+    }
+  </script>
+</body>
+</html>

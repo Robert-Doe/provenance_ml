@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic Medium-style Story</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--border:#2a2f38}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:17px/1.7 Georgia,serif}
+  main{max-width:760px;margin:0 auto;padding:24px 16px}
+  h1{font-size:40px;line-height:1.2;margin-bottom:8px}
+  .meta{color:var(--muted);font:14px system-ui;margin-bottom:16px}
+  .img{height:300px;background:#0f131a;border:1px solid var(--border);border-radius:12px;display:grid;place-items:center}
+  .resp{margin-top:24px;border-top:1px solid var(--border);padding-top:12px}
+  textarea{width:100%;min-height:120px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+  button{margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>On Writing Clearer Prompts</h1>
+  <div class="meta">by Ava Text • 10 min read • Sep 3</div>
+  <div class="img">[ cover ]</div>
+  <p>Clarity often comes from describing what you’ll exclude, not just what you include.</p>
+  <p>Here’s a checklist I use before shipping a prompt…</p>
+
+  <section class="resp">
+    <h3>Responses</h3>
+    <div class="meta">wordninja — “Love the negative prompts tip.”</div>
+    <form onsubmit="addResp(event)"><textarea id="r" placeholder="Write a response…" required></textarea><button>Publish</button></form>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addResp(e){e.preventDefault();const t=esc(document.getElementById('r').value);const d=document.createElement('div');d.className='meta';d.textContent='you — “‘+t+'”';e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

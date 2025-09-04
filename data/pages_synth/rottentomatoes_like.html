@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic RT-style Score Page</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#141920;--border:#2a2f38;--accent:#fa320a;--green:#53d769;--radius:12px}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  .big{font-size:34px;font-weight:900}
+  .small{color:var(--muted);font-size:13px}
+  textarea{width:100%;min-height:90px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Midnight Algorithms (2025)</h1>
+  <section class="grid">
+    <article class="card">
+      <div class="big" style="color:var(--green)">92%</div>
+      <div class="small">TOMATOMETER • 112 reviews</div>
+      <p>Critics consensus: a stylish, brainy thriller.</p>
+    </article>
+    <article class="card">
+      <div class="big" style="color:#ffd479">88%</div>
+      <div class="small">AUDIENCE SCORE • 2,143 ratings</div>
+      <p>Audience says: tense and surprisingly funny.</p>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Audience Reviews</h2>
+    <div class="small">user123: “Loved the sound design.”</div>
+    <form onsubmit="addR(event)"><textarea id="r" placeholder="Add your review…" required></textarea><button style="margin-top:8px">Post</button></form>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addR(e){e.preventDefault();const t=esc(document.getElementById('r').value);const d=document.createElement('div');d.className='small';d.textContent='you: “'+t+'”';e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

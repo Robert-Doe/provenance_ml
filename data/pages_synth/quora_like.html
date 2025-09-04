@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic Quora-style Q&A</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#141920;--border:#2a2f38;--radius:12px}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  header{background:#10141b;border-bottom:1px solid var(--border);padding:10px 16px;font-weight:900}
+  main{max-width:900px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  .small{color:var(--muted);font-size:13px}
+  .answer{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+  textarea{width:100%;min-height:100px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+  button{margin-top:8px}
+</style>
+</head>
+<body>
+<header>s-quora</header>
+<main>
+  <article class="card">
+    <h1>What are underrated techniques for debugging async code?</h1>
+    <div class="small">Asked by dev-curious • Today</div>
+
+    <section class="answer">
+      <strong>alex-dbg</strong> — Add structured logs with correlation IDs, then group by ID.
+      <div class="small">23 upvotes • 1h ago</div>
+    </section>
+
+    <section class="answer">
+      <strong>sam-io</strong> — Force a consistent scheduler with a test runner to reproduce timing.
+      <div class="small">17 upvotes • 2h ago</div>
+    </section>
+
+    <form class="answer" onsubmit="addAns(event)">
+      <h3>Your Answer</h3>
+      <textarea id="a" required placeholder="Write your answer…"></textarea>
+      <button>Submit</button>
+    </form>
+  </article>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addAns(e){e.preventDefault();const t=esc(document.getElementById('a').value);const d=document.createElement('section');d.className='answer';d.innerHTML='<strong>you</strong> — '+t+'<div class="small">0 upvotes • just now</div>';e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

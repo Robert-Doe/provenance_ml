@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic GitHub-style Repo</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#0f131a;--panel:#121723;--border:#2a2f38;--green:#2ea043;--blue:#58a6ff;--radius:10px;--mono:ui-monospace,Consolas,Menlo,monospace}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui}
+  header{background:#0f131a;border-bottom:1px solid var(--border)} .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;gap:12px;align-items:center}
+  input{border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:6px;padding:6px}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  .repo{display:flex;gap:12px;align-items:center} .repo strong{font-size:20px}
+  .tabs{display:flex;gap:12px;margin-top:8px}
+  .panel{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  pre{background:#0b0e14;border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto;color:#d8dee9;font-family:var(--mono)}
+  .issue{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+  textarea{width:100%;min-height:90px;border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px}
+  .btn{background:var(--green);border:none;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:800}
+  .muted{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div style="font-weight:900">s-hub</div><input placeholder="Search or jump to…"></div></header>
+<main>
+  <div class="repo"><strong>synthetic/awesome-tool</strong> <span class="muted">Public</span></div>
+  <nav class="tabs"><a href="#">Code</a><a href="#">Issues</a><a href="#">Pull requests</a><a href="#">Actions</a></nav>
+
+  <section class="panel">
+    <article class="card">
+      <h3>README.md</h3>
+      <pre># Awesome Tool
+
+CLI for structured logs with JSON output.
+
+## Install
+\`\`\`bash
+npm i -g awesome-tool
+\`\`\`
+</pre>
+      <h3>Issues</h3>
+      <div class="issue"><strong>#12</strong> Feature: add \`--pretty\` flag <div class="muted">opened by devbot</div></div>
+      <div class="issue"><strong>#11</strong> Bug: windows path handling <div class="muted">opened by runner</div></div>
+
+      <form onsubmit="addIssue(event)" style="margin-top:12px">
+        <h4>New issue</h4>
+        <textarea id="itext" placeholder="Title + details…" required></textarea>
+        <button class="btn" type="submit">Submit new issue</button>
+      </form>
+    </article>
+
+    <aside class="card">
+      <h3>Pull Request #7</h3>
+      <div class="muted">Add colored output</div>
+      <div class="issue">
+        <strong>reviewer</strong>: Looks good. Consider defaulting to TTY only.
+      </div>
+      <form onsubmit="addReview(event)">
+        <textarea id="rtext" placeholder="Leave a review…" required></textarea>
+        <button class="btn" type="submit" style="background:var(--blue)">Comment</button>
+      </form>
+    </aside>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addIssue(e){e.preventDefault();const t=esc(document.getElementById('itext').value);const d=document.createElement('div');d.className='issue';d.innerHTML='<strong>#'+Math.floor(Math.random()*1000)+'</strong> '+t+' <div class="muted">opened by you • just now</div>';e.target.before(d);e.target.reset()}
+  function addReview(e){e.preventDefault();const t=esc(document.getElementById('rtext').value);const d=document.createElement('div');d.className='issue';d.innerHTML='<strong>you</strong>: '+t;e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

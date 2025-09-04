@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic StackOverflow-style Q&A</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#121720;--border:#2a2f38;--accent:#f48024;--radius:10px;--mono:ui-monospace,Consolas,Menlo,monospace}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  header{background:#10141b;border-bottom:1px solid var(--border)} .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;gap:12px;align-items:center}
+  .logo{font-weight:900;color:var(--accent)} input{border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px;flex:1}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:80px 1fr;gap:16px}
+  .vote{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .vote button{background:#1c2230;border:1px solid var(--border);color:#e9eef6;border-radius:8px;padding:6px;cursor:pointer}
+  .post,.answer{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  pre,code{font-family:var(--mono)} pre{background:#0f1218;border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto}
+  .a-meta{color:var(--muted);font-size:13px;margin-top:6px}
+  .check{color:#98fb98;font-weight:900}
+  .comment{color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:6px;margin-top:6px}
+  textarea{width:100%;min-height:100px;border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px}
+  .btn{background:var(--accent);border:none;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:800}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="logo">s-overflow</div><input placeholder="Search questions…"></div></header>
+<main>
+  <section class="grid">
+    <aside class="vote"><button onclick="adj('#q',1)">▲</button><div id="q">12</div><button onclick="adj('#q',-1)">▼</button></aside>
+    <article class="post">
+      <h1>How do I debounce an input in vanilla JavaScript?</h1>
+      <p>I want to delay an API call until typing stops for ~300ms. What’s a minimal implementation?</p>
+      <div class="comment">“Show what you tried.” — helper</div>
+    </article>
+  </section>
+
+  <h2 style="margin-top:16px">2 Answers</h2>
+
+  <section class="grid">
+    <aside class="vote"><button onclick="adj('#a1',1)">▲</button><div id="a1">37</div><button onclick="adj('#a1',-1)">▼</button></aside>
+    <article class="answer">
+      <pre><code>function debounce(fn, wait=300){
+  let t;
+  return (...args) =&gt; {
+    clearTimeout(t);
+    t = setTimeout(() =&gt; fn(...args), wait);
+  };
+}</code></pre>
+      <div class="a-meta"><span class="check">✔ accepted</span> by asker • today</div>
+    </article>
+  </section>
+
+  <section class="grid">
+    <aside class="vote"><button onclick="adj('#a2',1)">▲</button><div id="a2">14</div><button onclick="adj('#a2',-1)">▼</button></aside>
+    <article class="answer">
+      <p>With leading invocation:</p>
+      <pre><code>function debounceLeading(fn, wait=300){
+  let t, called=false;
+  return (...args) =&gt; {
+    if (!called) { fn(...args); called=true; }
+    clearTimeout(t);
+    t=setTimeout(()=&gt;{ called=false; }, wait);
+  };
+}</code></pre>
+      <div class="a-meta">improves perceived responsiveness</div>
+    </article>
+  </section>
+
+  <section style="margin-top:16px" class="post">
+    <h3>Your Answer</h3>
+    <form onsubmit="postAnswer(event)"><textarea id="ans" required placeholder="Add your solution…"></textarea><div style="margin-top:8px"><button class="btn">Post Your Answer</button></div></form>
+  </section>
+</main>
+<script>
+  function adj(sel,d){const n=document.querySelector(sel);n.textContent=(+n.textContent)+d}
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function postAnswer(e){e.preventDefault();const t=esc(document.getElementById('ans').value);const g=document.createElement('section');g.className='grid';g.innerHTML='<aside class="vote"><button>▲</button><div>0</div><button>▼</button></aside><article class="answer"><pre><code>'+t+'</code></pre><div class="a-meta">by you • just now</div></article>';e.target.closest('section').before(g);e.target.reset()}
+</script>
+</body>
+</html>

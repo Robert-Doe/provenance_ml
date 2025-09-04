@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic IMDb-style Title</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#141920;--border:#2a2f38;--accent:#f5c518;--radius:12px}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  header{background:#10141b;border-bottom:1px solid var(--border)} .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;gap:12px;align-items:center}
+  .logo{font-weight:900;color:#000;background:var(--accent);padding:2px 6px;border-radius:4px}
+  input{border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px;flex:1}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:260px 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  .stars{color:#ffd479} .small{color:var(--muted);font-size:13px}
+  textarea{width:100%;min-height:90px;border:1px solid var(--border);background:#0c0f14;color:#fff;border-radius:8px;padding:8px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="logo">s-db</div><input placeholder="Search movies, TV, celebrities"></div></header>
+<main>
+  <section class="grid">
+    <aside class="card"><div style="background:#0f131a;height:360px;display:grid;place-items:center">[Poster]</div></aside>
+    <article class="card">
+      <h1>Midnight Algorithms (2025)</h1>
+      <div class="stars">★★★★☆ <span class="small">8.1/10 • 5.6k ratings</span></div>
+      <p>A thriller about a researcher racing to stop a runaway optimizer.</p>
+      <h3>User Reviews</h3>
+      <div class="card" style="margin:8px 0">
+        <div class="stars">★★★★★</div>
+        <p>Strong performances; tense pacing throughout.</p>
+        <div class="small">coder-filmgoer • yesterday</div>
+      </div>
+      <form onsubmit="addRev(event)">
+        <textarea id="rev" placeholder="Write your review…" required></textarea>
+        <button style="margin-top:8px">Post</button>
+      </form>
+    </article>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addRev(e){e.preventDefault();const t=esc(document.getElementById('rev').value);const d=document.createElement('div');d.className='card';d.style.margin='8px 0';d.innerHTML='<div class="stars">★★★★☆</div><p>'+t+'</p><div class="small">you • just now</div>';e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

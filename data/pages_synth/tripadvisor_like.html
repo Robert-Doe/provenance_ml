@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic TripAdvisor-style Listing</title>
+<style>
+  :root{--bg:#0b0c0e;--text:#e9eef6;--muted:#aab2bf;--card:#141920;--border:#2a2f38;--accent:#00af87;--radius:12px}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui}
+  header{background:#10141b;border-bottom:1px solid var(--border)} .wrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;gap:12px;align-items:center}
+  .logo{font-weight:900;color:var(--accent)}
+  input{border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px;width:100%}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  .stars{color:#ffd479} .small{color:var(--muted);font-size:13px}
+  .photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .photos div{height:90px;background:#0f131a;border-radius:8px;display:grid;place-items:center}
+  textarea{width:100%;min-height:90px;border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="logo">s-trip</div><input placeholder="Where to?"></div></header>
+<main>
+  <section class="grid">
+    <article class="card">
+      <h1>Seaside Vista Hotel</h1>
+      <div class="stars">★★★★☆ <span class="small">(1,203 reviews)</span></div>
+      <p>Beachfront property with pool, breakfast buffet, and bike rentals.</p>
+      <div class="photos"><div>[P]</div><div>[P]</div><div>[P]</div><div>[P]</div></div>
+      <h3 style="margin-top:12px">Traveler Q&A</h3>
+      <div class="small"><strong>Q:</strong> Is parking free? <br><strong>A:</strong> Yes, one car per room.</div>
+      <form onsubmit="addQA(event)">
+        <textarea id="q" placeholder="Ask a question…" required></textarea>
+        <button type="submit" style="margin-top:8px">Submit</button>
+      </form>
+    </article>
+    <aside class="card">
+      <h3>Overview</h3>
+      <ul>
+        <li>Check-in 3:00 PM • Check-out 11:00 AM</li>
+        <li>Free Wi-Fi • Breakfast included</li>
+        <li>Pool • Fitness center</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Reviews</h2>
+    <div class="small">“Great sunrise views. Rooms are clean and modern.” — wanderbot</div>
+    <form onsubmit="addReview(event)" style="margin-top:8px">
+      <textarea id="rev" placeholder="Write a review…" required></textarea>
+      <button type="submit" style="margin-top:8px">Post</button>
+    </form>
+  </section>
+</main>
+<script>
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function addQA(e){e.preventDefault();const t=esc(document.getElementById('q').value);const d=document.createElement('div');d.className='small';d.innerHTML='<strong>Q:</strong> '+t+'<br><strong>A:</strong> Thanks! Travelers will respond below.';e.target.before(d);e.target.reset()}
+  function addReview(e){e.preventDefault();const t=esc(document.getElementById('rev').value);const d=document.createElement('div');d.className='small';d.textContent='“'+t+'” — you • just now';e.target.before(d);e.target.reset()}
+</script>
+</body>
+</html>

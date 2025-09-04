@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Synthetic Reddit-style — Ultra Thread & Feed</title>
+<meta name="description" content="Very long, Reddit-like page with nested comments, forms, and massive DOM for scraping experiments.">
+<style>
+  :root{
+    --bg:#0b0c0e; --panel:#10141b; --card:#141a22; --muted:#aab2bf; --text:#e9eef6;
+    --border:#2a2f38; --accent:#ff4500; --link:#82b1ff; --ok:#2dbf73; --warn:#ffb020;
+    --radius:12px; --mono:ui-monospace,Consolas,Menlo,monospace; --max:1200px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+  a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+  .top{position:sticky;top:0;z-index:50;background:var(--panel);border-bottom:1px solid var(--border)}
+  .top .wrap{max-width:var(--max);margin:0 auto;display:flex;gap:12px;align-items:center;padding:8px 12px}
+  .logo{font-weight:900;color:var(--accent)}
+  .tabs a{color:#d3dae7;margin-right:10px;padding:6px 8px;border-radius:8px}
+  .tabs a[aria-current="page"], .tabs a:hover{background:#0d1118}
+  .search{margin-left:auto;display:flex;gap:8px}
+  .search input{border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:999px;padding:8px 12px;min-width:260px}
+  main{max-width:var(--max);margin:0 auto;padding:16px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+  .post{display:grid;grid-template-columns:56px 1fr;gap:12px}
+  .vote{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .vote button{background:#1d2330;border:1px solid var(--border);color:#e9eef6;border-radius:8px;padding:4px 6px;cursor:pointer}
+  .meta{color:var(--muted);font-size:13px}
+  .flair{display:inline-flex;align-items:center;gap:6px;background:#212838;border:1px solid #2c3344;padding:2px 6px;border-radius:999px;font-size:12px;color:#dbe4f2}
+  h1{margin:2px 0 6px;font-size:22px}
+  .content{white-space:pre-wrap}
+  .actions{display:flex;gap:12px;margin-top:8px;color:var(--muted);font-size:14px}
+  .tag{font-size:12px;color:#d0d6e5;border:1px dashed var(--border);padding:2px 6px;border-radius:999px}
+  .divider{border-top:1px solid var(--border);margin:12px 0}
+  /* Comments */
+  .comments{margin-top:10px}
+  .comment{display:grid;grid-template-columns:40px 1fr;gap:10px;margin:10px 0}
+  .bar{border-left:3px solid #2f3642}
+  .cbox{background:#0f131a;border:1px solid var(--border);border-radius:10px;padding:10px}
+  .cmeta{color:var(--muted);font-size:12px;margin-bottom:4px}
+  .author{font-weight:700;color:#d8dee9}
+  .ctext{white-space:pre-wrap}
+  .reply{margin-left:24px}
+  .add-comment{background:#0f1217;border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:12px}
+  textarea,input{width:100%;border:1px solid var(--border);background:#0c0f14;color:var(--text);border-radius:8px;padding:8px}
+  textarea{min-height:100px}
+  .row{display:flex;gap:8px}
+  .btn{background:var(--accent);border:none;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:800}
+  .btn.ghost{background:transparent;border:1px solid var(--border)}
+  code{font-family:var(--mono);font-size:12px;background:#0e1116;border:1px solid #2b313c;border-radius:6px;padding:2px 6px}
+  pre{font-family:var(--mono);background:#0e1116;border:1px solid #2b313c;border-radius:8px;padding:10px;overflow:auto}
+  /* Sidebar */
+  .side .widget{margin-bottom:12px}
+  .rules li{margin:4px 0}
+  .flair-list{display:flex;gap:6px;flex-wrap:wrap}
+  .mods li{display:flex;align-items:center;gap:6px}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#1a2030;border:1px solid #2a3242;padding:2px 6px;border-radius:999px;font-size:12px;color:#e5ecf8}
+  .ad{display:grid;place-items:center;border:2px dashed #394150;border-radius:12px;min-height:120px;color:#7f8896;background:#0e1116}
+  /* Feed */
+  .feed{display:grid;gap:12px;margin-top:16px}
+  .feed .item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;display:grid;grid-template-columns:52px 1fr;gap:10px}
+  .feed .thumb{height:80px;background:#0e1218;border-radius:8px;display:grid;place-items:center;color:#77809a;font-size:12px}
+  .pager{display:flex;gap:8px;justify-content:center;margin:16px 0}
+  .pager button{background:#1b2230;border:1px solid var(--border);color:#dfe6f5;border-radius:8px;padding:8px 12px;cursor:pointer}
+  /* Archive */
+  .archive{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .archive .entry{background:#0f1218;border:1px solid var(--border);border-radius:10px;padding:8px}
+  /* Footer */
+  footer{margin-top:32px;border-top:1px solid var(--border);background:#0b0c0f}
+  footer .wrap{max-width:var(--max);margin:0 auto;padding:18px 12px;color:var(--muted);display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media (max-width: 980px){.grid{grid-template-columns:1fr}.archive{grid-template-columns:1fr 1fr}footer .wrap{grid-template-columns:1fr 1fr}}
+  @media (max-width: 560px){.archive{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <div class="logo">s/research</div>
+      <nav class="tabs" aria-label="Primary">
+        <a href="#" aria-current="page">Hot</a>
+        <a href="#">New</a>
+        <a href="#">Top</a>
+        <a href="#">Rising</a>
+        <a href="#">Controversial</a>
+      </nav>
+      <form class="search" role="search" onsubmit="event.preventDefault()">
+        <input aria-label="Search posts" placeholder="Search s/research" />
+      </form>
+    </div>
+  </div>
+
+  <main>
+    <section class="grid" aria-label="Thread">
+      <!-- THREAD LEFT -->
+      <article class="card post" id="thread-root">
+        <aside class="vote">
+          <button onclick="adj('#score',1)" aria-label="upvote">▲</button>
+          <div id="score" aria-live="polite">1287</div>
+          <button onclick="adj('#score',-1)" aria-label="downvote">▼</button>
+        </aside>
+        <section>
+          <div class="meta">Posted by <strong>u/synth_poster</strong> • 6 hours ago • s/research</div>
+          <h1>Share your smallest tool that saves the most time</h1>
+          <div class="flair">Discussion</div>
+          <div class="content" id="post-content">
+A tiny CLI that converts copied tables to CSV:
+<pre><code>pbpaste | csvify &gt; table.csv
+# Windows:
+Get-Clipboard | csvify &gt; table.csv
+</code></pre>
+          </div>
+          <div class="actions">
+            <a href="#">Share</a> • <a href="#save">Save</a> • <a href="#hide">Hide</a> •
+            <a href="#report" onclick="openReport()">Report</a> <span class="tag">tools</span> <span class="tag">productivity</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- COMMENTS -->
+          <section class="comments" aria-label="Comments">
+            <h2>Comments</h2>
+
+            <!-- NESTED COMMENT 1 -->
+            <div class="comment" id="c1">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/cli-goblin</span> • 1 hour ago • 214 points</div>
+                <div class="ctext">
+Alias I use daily:
+<code>gp(){ git add -A &amp;&amp; git commit -m "$1" &amp;&amp; git push; }</code>
+                </div>
+                <div class="actions"><a href="#">Reply</a> • <a href="#">Give Award</a> • <a href="#">Share</a></div>
+              </div>
+            </div>
+
+            <!-- REPLY TO COMMENT 1 -->
+            <div class="comment reply" id="c1r1">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/infra-lurker</span> • 45 min ago • 97 points</div>
+                <div class="ctext">This plus pre-commit hooks = chef’s kiss.</div>
+                <div class="actions"><a href="#">Reply</a></div>
+              </div>
+            </div>
+
+            <!-- NESTED COMMENT with deeper replies -->
+            <div class="comment" id="c2">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/data-ranger</span> • 2 hours ago • 143 points</div>
+                <div class="ctext">A jq one-liner that formats logs so I can actually read them.</div>
+                <div class="actions"><a href="#">Reply</a></div>
+              </div>
+            </div>
+
+            <div class="comment reply" id="c2r1">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/stream-tamer</span> • 1 hour ago • 61 points</div>
+                <div class="ctext">Mind sharing? I tend to over-escape.</div>
+              </div>
+            </div>
+
+            <div class="comment reply" id="c2r2">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/data-ranger</span> • 52 min ago • 80 points</div>
+                <div class="ctext"><pre><code>jq -r '.time, (.message|@json)' log.json | paste - -</code></pre></div>
+              </div>
+            </div>
+
+            <!-- LONG CHAIN (multiple levels) -->
+            <div class="comment" id="c3">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/profiler</span> • 3 hours ago • 310 points</div>
+                <div class="ctext">Add timestamps to shell history:
+<code>export HISTTIMEFORMAT="%F %T "</code></div>
+              </div>
+            </div>
+            <div class="comment reply" id="c3r1">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/latency-lover</span> • 2 hours ago • 88 points</div>
+                <div class="ctext">Pair that with <code>scriptreplay</code> for demos.</div>
+              </div>
+            </div>
+            <div class="comment reply" id="c3r2">
+              <div class="bar"></div>
+              <div class="cbox">
+                <div class="cmeta"><span class="author">u/profiler</span> • 1 hour ago • 61 points</div>
+                <div class="ctext">Nice. Also, consider this:
+<pre><code>bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add-comment form -->
+            <form class="add-comment" id="comment-form" onsubmit="postComment(event)">
+              <div class="row">
+                <input id="name" placeholder="Username" required>
+                <input id="email" type="email" placeholder="Email (not shown)" required>
+              </div>
+              <textarea id="text" placeholder="What are your thoughts?" required></textarea>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn">Comment</button>
+                <button class="btn ghost" type="button" onclick="loadMoreComments()">Load more</button>
+              </div>
+              <p class="meta">HTML is escaped. Backticks render as code blocks. Mentions like @user are allowed.</p>
+            </form>
+
+          </section>
+        </section>
+      </article>
+
+      <!-- SIDEBAR RIGHT -->
+      <aside class="side">
+        <div class="card widget">
+          <strong>About s/research</strong>
+          <p class="meta">A place to discuss tools and methods for daily developer productivity.</p>
+        </div>
+
+        <div class="card widget">
+          <strong>Rules</strong>
+          <ol class="rules">
+            <li>Be respectful; no personal attacks.</li>
+            <li>No spam or self-promo without substance.</li>
+            <li>Title must summarize the content.</li>
+            <li>Post code snippets in fenced blocks.</li>
+          </ol>
+        </div>
+
+        <div class="card widget">
+          <strong>Post flair</strong>
+          <div class="flair-list">
+            <span class="flair">Show &amp; Tell</span>
+            <span class="flair">Discussion</span>
+            <span class="flair">Guide</span>
+            <span class="flair">Question</span>
+          </div>
+        </div>
+
+        <div class="card widget">
+          <strong>Moderators</strong>
+          <ul class="mods">
+            <li><span class="badge">mod</span> u/guidekeeper</li>
+            <li><span class="badge">mod</span> u/toolsmith</li>
+            <li><span class="badge">bot</span> u/auto_helper</li>
+          </ul>
+        </div>
+
+        <div class="card widget">
+          <strong>Quick post</strong>
+          <form onsubmit="quickPost(event)">
+            <input id="qp-title" placeholder="Title" required>
+            <textarea id="qp-body" placeholder="Body (optional)"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn">Post</button>
+              <button class="btn ghost" type="reset">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card widget">
+          <div class="ad">ADVERTISEMENT • sidebar-1</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- FEED (lots of items) -->
+    <section aria-label="More from s/research" class="feed" id="feed">
+      <h2 class="card" style="margin:0">More posts</h2>
+
+      <!-- A block of static items for immediate scraping -->
+      <div class="item">
+        <div class="vote"><button>▲</button><div>421</div><button>▼</button></div>
+        <div>
+          <div class="meta">u/bench-runner • 5 hours ago</div>
+          <a href="#"><strong>Show your favorite one-liner for CSV cleaning</strong></a>
+          <div class="meta">84 comments • Discussion <span class="flair">Guide</span></div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="vote"><button>▲</button><div>318</div><button>▼</button></div>
+        <div>
+          <div class="meta">u/latte-dev • 8 hours ago</div>
+          <a href="#"><strong>I built a keyboard shortcut map for every IDE</strong></a>
+          <div class="meta">102 comments • Show &amp; Tell</div>
+        </div>
+      </div>
+
+      <!-- Many more will be appended via JS for ultra length -->
+    </section>
+
+    <!-- ARCHIVE GRID -->
+    <section class="card" style="margin-top:16px" aria-label="Deep Archive">
+      <h2>Deep Archive</h2>
+      <div id="archive" class="archive">
+        <!-- Filled by static & JS for scale -->
+        <div class="entry"><a href="#">2021-01 • Regex cheatsheet for logs</a></div>
+        <div class="entry"><a href="#">2021-02 • Cron expression visualizer</a></div>
+        <div class="entry"><a href="#">2021-03 • Terminal color palettes</a></div>
+        <div class="entry"><a href="#">2021-04 • Batch rename tips</a></div>
+      </div>
+      <div class="pager">
+        <button>&laquo; Prev</button>
+        <button>1</button><button aria-current="page">2</button><button>3</button><button>4</button>
+        <button>Next &raquo;</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div>
+        <strong>Communities</strong>
+        <ul>
+          <li><a href="#">s/data</a></li>
+          <li><a href="#">s/cli</a></li>
+          <li><a href="#">s/ask</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>Resources</strong>
+        <ul>
+          <li><a href="#">API</a></li>
+          <li><a href="#">Developer Tools</a></li>
+          <li><a href="#">Content Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>Legal</strong>
+        <ul>
+          <li><a href="#">User Agreement</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Cookies</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>Contact</strong>
+        <p class="meta">mods@s-research.example</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Report modal -->
+  <dialog id="report" style="border:none;border-radius:16px;max-width:520px;width:100%;background:#0f1217;color:#e8eef9">
+    <form method="dialog" style="padding:16px">
+      <h3>Report post</h3>
+      <label>Reason</label>
+      <select style="width:100%;border:1px solid #2c3340;background:#0b0d12;color:#e8eef9;border-radius:8px;padding:8px">
+        <option>Spam</option><option>Harassment</option><option>Self-harm</option><option>Other</option>
+      </select>
+      <label style="margin-top:8px;display:block">Details (optional)</label>
+      <textarea placeholder="Add context…"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" value="ok">Submit</button>
+        <button class="btn ghost" value="cancel">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+<script>
+  /* ===== Utilities ===== */
+  function adj(sel,d){const n=document.querySelector(sel); if(!n) return; n.textContent=(+n.textContent)+d}
+  const esc=s=>s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function openReport(){const d=document.getElementById('report'); if (d && typeof d.showModal==='function') d.showModal()}
+
+  /* ===== Comment posting & lazy loading ===== */
+  function postComment(e){
+    e.preventDefault();
+    const name = (document.getElementById('name').value || 'user').trim();
+    const raw  = document.getElementById('text').value;
+    const safe = esc(raw).replace(/```([^`]+)```/gs, (_,code)=>'<pre><code>'+code.replace(/</g,'&lt;')+'</code></pre>');
+    const wrap = document.createElement('div');
+    wrap.className = 'comment';
+    wrap.innerHTML =
+      '<div class="bar"></div>'+
+      '<div class="cbox">'+
+        '<div class="cmeta"><span class="author">u/'+name+'</span> • just now • 1 point</div>'+
+        '<div class="ctext">'+safe+'</div>'+
+        '<div class="actions"><a href="#">Reply</a></div>'+
+      '</div>';
+    const form = document.getElementById('comment-form');
+    form.before(wrap);
+    form.reset();
+  }
+
+  function loadMoreComments(){
+    const holder = document.getElementById('thread-root').querySelector('.comments');
+    for (let i=0;i<10;i++){
+      const c = document.createElement('div');
+      c.className = 'comment';
+      c.innerHTML =
+        '<div class="bar"></div>'+
+        '<div class="cbox">'+
+          '<div class="cmeta"><span class="author">u/guest'+(1000+Math.floor(Math.random()*9000))+'</span> • moments ago • '+(1+Math.floor(Math.random()*40))+' points</div>'+
+          '<div class="ctext">This is an auto-generated comment for DOM inflation. Tip: use <code>ripgrep</code> for fast searching.</div>'+
+        '</div>';
+      holder.appendChild(c);
+      if (i%3===0){
+        const r = document.createElement('div');
+        r.className = 'comment reply';
+        r.innerHTML =
+          '<div class="bar"></div>'+
+          '<div class="cbox">'+
+            '<div class="cmeta"><span class="author">u/replier'+(100+Math.floor(Math.random()*900))+'</span> • just now • 3 points</div>'+
+            '<div class="ctext">Agreed. Also look at <code>fd</code> and <code>bat</code>.</div>'+
+          '</div>';
+        holder.appendChild(r);
+      }
+    }
+  }
+
+  /* ===== Quick post (sidebar) ===== */
+  function quickPost(e){
+    e.preventDefault();
+    const title = esc(document.getElementById('qp-title').value);
+    const body  = esc(document.getElementById('qp-body').value);
+    const feed  = document.getElementById('feed');
+    const item = document.createElement('div');
+    item.className='item';
+    item.innerHTML =
+      '<div class="vote"><button>▲</button><div>'+ (10+Math.floor(Math.random()*100)) +'</div><button>▼</button></div>'+
+      '<div><div class="meta">u/you • just now</div><a href="#"><strong>'+title+'</strong></a><div class="meta">0 comments</div><div class="content">'+body+'</div></div>';
+    feed.appendChild(item);
+    e.target.reset();
+  }
+
+  /* ===== Massive DOM inflation for long pages =====
+     Adjust counts if you want even larger pages.
+  */
+  (function inflateDOM(){
+    const feed = document.getElementById('feed');
+    // Append many feed items (static-like, but generated at load)
+    for (let i=0;i<120;i++){
+      const v = 5 + Math.floor(Math.random()*800);
+      const c = 1 + Math.floor(Math.random()*180);
+      const item = document.createElement('div');
+      item.className='item';
+      item.innerHTML =
+        '<div class="vote"><button>▲</button><div>'+v+'</div><button>▼</button></div>'+
+        '<div>'+
+          '<div class="meta">u/user'+(i+1)+' • '+(1+Math.floor(Math.random()*23))+' hours ago</div>'+
+          '<a href="#"><strong>Toolkit #'+(i+1)+': tiny utility for '+ (["CSV","JSON","YAML","logs","Git","Docker","K8s"][i%7]) +'</strong></a>'+
+          '<div class="meta">'+c+' comments • '+ (["Discussion","Guide","Show & Tell","Question"][i%4]) +'</div>'+
+        '</div>';
+      feed.appendChild(item);
+    }
+
+    // Inflate archive
+    const arc = document.getElementById('archive');
+    for (let year=2016; year<=2025; year++){
+      for (let m=1;m<=12;m++){
+        const e = document.createElement('div');
+        e.className='entry';
+        e.innerHTML = '<a href="#">'+year+'-'+String(m).padStart(2,'0')+' • Tool roundup '+(m)+'</a>';
+        arc.appendChild(e);
+      }
+    }
+
+    // Deep nested comment chains for variety
+    const holder = document.getElementById('thread-root').querySelector('.comments');
+    for (let k=0;k<12;k++){
+      const root = document.createElement('div');
+      root.className = 'comment';
+      root.innerHTML =
+        '<div class="bar"></div>'+
+        '<div class="cbox">'+
+          '<div class="cmeta"><span class="author">u/nester'+k+'</span> • '+(3+k)+' hours ago • '+(50+k*2)+' points</div>'+
+          '<div class="ctext">Here is a nested chain level 0. '+ (k%2? 'Consider <code>fzf</code> for fuzzy find.':'Remember to escape HTML!') +'</div>'+
+        '</div>';
+      holder.appendChild(root);
+
+      let parent = root;
+      for (let d=1; d<=Math.min(6, 2 + (k%6)); d++){
+        const reply = document.createElement('div');
+        reply.className='comment reply';
+        reply.innerHTML =
+          '<div class="bar"></div>'+
+          '<div class="cbox">'+
+            '<div class="cmeta"><span class="author">u/nester'+k+'_lvl'+d+'</span> • '+(2+d)+' hours ago • '+(20+d*3)+' points</div>'+
+            '<div class="ctext">Reply depth '+d+'. Tip: use <code>tee</code> to split output.</div>'+
+          '</div>';
+        holder.appendChild(reply);
+        parent = reply;
+      }
+    }
+  })();
+</script>
+</body>
+</html>
